@@ -24,6 +24,7 @@ if __name__ == "__main__":
     dlist_read_from(container, input_file)
 
     print("Файл прочитан.")
+    dlist_sort(container)
     dlist_write_to(container, output_file)
     dlist_write_game_film_to(container, output_file)
 
