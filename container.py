@@ -1,3 +1,4 @@
+import sys
 from film import (
     film_write_to,
     film_read_from,
@@ -40,6 +41,15 @@ def dlist_clear(dlist: DList):
     dlist.size = 0
 
 
+def num_vowels(string) -> int:
+    vowels = set("aeiouауоыиэяюёеAEIOUАУОЫИЭЯЮЁЕ")
+    amount = 0
+    for letter in string:
+        if letter in vowels:
+            amount += 1
+    return amount
+
+
 def dlist_read_from(dlist: DList, stream):
     while line := stream.readline():
         item = film_read_from(stream, line)
@@ -51,11 +61,39 @@ def dlist_write_to(dlist: DList, stream):
 
     current_item = dlist.head
     if dlist.size != 0:
-        film_write_to(current_item.data, stream)
+        try:
+            film_write_to(current_item.data, stream)
+            stream.write(f"\tКоличество гласных: {num_vowels(current_item.data.title)}\n")
+        except Exception as e:
+            stream.close()
+            print("Ошибка записи фильма!")
+            print(e)
+            sys.exit(1)
         current_item = current_item.next
         while current_item is not dlist.head:
-            film_write_to(current_item.data, stream)
+            try:
+                film_write_to(current_item.data, stream)
+                stream.write(f"\tКоличество гласных: {num_vowels(current_item.data.title)}\n")
+            except Exception as e:
+                stream.close()
+                print("Ошибка записи фильма!")
+                print(e)
+                sys.exit(1)
             current_item = current_item.next
+
+
+def match(first, second) -> bool:
+    return num_vowels(first.title) < num_vowels(second.title)
+
+
+def dlist_sort(dlist: DList):
+    for i in range(dlist.size):
+        curr_node = dlist.head
+        while curr_node.next != dlist.head:
+            next_node = curr_node.next
+            if match(curr_node.data, next_node.data):
+                curr_node.data, next_node.data = next_node.data, curr_node.data
+            curr_node = next_node
 
 
 def dlist_write_game_film_to(dlist: DList, stream):
@@ -64,9 +102,23 @@ def dlist_write_game_film_to(dlist: DList, stream):
     current_item = dlist.head
     if dlist.size != 0:
         if current_item.data.key == TypeFilm.game_film:
-            film_write_to(current_item.data, stream)
+            try:
+                film_write_to(current_item.data, stream)
+                stream.write(f"\tКоличество гласных: {num_vowels(current_item.data.title)}\n")
+            except Exception as e:
+                stream.close()
+                print("Ошибка записи фильма!")
+                print(e)
+                sys.exit(1)
         current_item = current_item.next
         while current_item is not dlist.head:
             if current_item.data.key == TypeFilm.game_film:
-                film_write_to(current_item.data, stream)
+                try:
+                    film_write_to(current_item.data, stream)
+                    stream.write(f"\tКоличество гласных: {num_vowels(current_item.data.title)}\n")
+                except Exception as e:
+                    stream.close()
+                    print("Ошибка записи фильма!")
+                    print(e)
+                    sys.exit(1)
             current_item = current_item.next
